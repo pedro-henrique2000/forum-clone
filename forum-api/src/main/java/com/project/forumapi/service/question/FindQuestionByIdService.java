@@ -18,7 +18,8 @@ public class FindQuestionByIdService {
     QuestionResponseMapper questionResponseMapper;
 
     public QuestionResponse findById(Long id) {
-        Question question = repository.findById(id).orElseThrow(NotFoundException::new);
+        Question question = repository.findById(id)
+                .orElseThrow(() -> new NotFoundException(String.format("Not found a question with id %d", id)));
 
         return questionResponseMapper.convert(question);
     }

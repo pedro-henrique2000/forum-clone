@@ -1,5 +1,6 @@
 package com.project.forumapi.service.answer;
 
+import com.project.forumapi.exception.NotFoundException;
 import com.project.forumapi.mapper.answer.AnswerResponseMapper;
 import com.project.forumapi.model.Answer;
 import com.project.forumapi.model.Question;
@@ -24,7 +25,10 @@ public class FindAnswerByQuestionService {
     @Autowired
     AnswerResponseMapper answerResponseMapper;
 
-    public List<AnswerResponse> find(Question question) {
+    public List<AnswerResponse> find(Long id) {
+        Question question = questionRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException(String.format("Not found a question with id %d", id)));
+
         List<Answer> answerList = answerRepository.findByQuestion(question);
         return answerList.stream()
                 .map(answer -> answerResponseMapper.convert(answer))

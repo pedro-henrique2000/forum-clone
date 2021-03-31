@@ -6,6 +6,7 @@ import com.project.forumapi.mapper.vote.VoteMapper;
 import com.project.forumapi.model.Answer;
 import com.project.forumapi.model.User;
 import com.project.forumapi.model.Vote;
+import com.project.forumapi.model.VoteType;
 import com.project.forumapi.model.request.VoteRequest;
 import com.project.forumapi.repository.AnswerRepository;
 import com.project.forumapi.repository.VoteRepository;
@@ -30,25 +31,30 @@ public class CreateVoteService {
     @Autowired
     VoteMapper voteMapper;
 
-    public void createVote(VoteRequest voteRequest) {
+    public Vote createVote(VoteRequest voteRequest) {
         Answer answer = answerRepository.findById(voteRequest.getPostId()).orElseThrow(NotFoundException::new);
         User user = loggedUserService.getLoggedUser();
         Optional<Vote> voteOptional = voteRepository.findByAnswerAndUser(answer, user);
 
-        //change logic
-
         if (voteOptional.isPresent() && voteOptional.get().getVoteType().name().equals(voteRequest.getVoteType().name()))
             throw new InvalidException("You already voted in that answer!");
 
-        if (voteRequest.getVoteType().name().equals("LIKE"))
+        if (voteOptional.isPresent() && !voteOptional.get().getVoteType().name().equals(voteRequest.getVoteType().name())) {
+            int voteValue = voteRequest.getVoteType() == VoteType.LIKE ? 2 : -2;
+            Vote vote = voteOptional.get();
+            vote.setVoteType(voteRequest.getVoteType());
+            answer.setVotes(answer.getVotes() + voteValue);
+            return voteRepository.save(vote);
+        }
+
+        if (!voteOptional.isPresent() && voteRequest.getVoteType().name().equals("LIKE"))
             answer.setVotes(answer.getVotes() + 1);
 
-        if (voteRequest.getVoteType().name().equals("DISLIKE"))
+        if (!voteOptional.isPresent() && voteRequest.getVoteType().name().equals("DISLIKE"))
             answer.setVotes(answer.getVotes() + -1);
 
         answerRepository.save(answer);
-
-        voteRepository.save(voteMapper.convert(voteRequest, answer, user));
+        return voteRepository.save(voteMapper.convert(voteRequest, answer, user));
 
     }
 

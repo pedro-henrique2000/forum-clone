@@ -25,7 +25,8 @@ public class FinishQuestionService {
 
     public void finish(Long id) {
         User user = loggedUserService.getLoggedUser();
-        Question question = questionRepository.findById(id).orElseThrow(NotFoundException::new);
+        Question question = questionRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException(String.format("Not found a question with id %d", id)));
         questionPertainToUserValidator.accept(user, question);
 
         if(question.getQuestionStatus().name().equals("SOLVED"))

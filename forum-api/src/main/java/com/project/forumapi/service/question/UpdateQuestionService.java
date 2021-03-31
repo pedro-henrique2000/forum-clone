@@ -29,7 +29,7 @@ public class UpdateQuestionService {
 
     public QuestionResponse update(QuestionRequest questionRequest, Long id) {
         User user = loggedUserService.getLoggedUser();
-        Question question = questionRepository.findById(id).orElseThrow(NotFoundException::new);
+        Question question = questionRepository.findById(id).orElseThrow(() -> new NotFoundException(String.format("Not found a question with id %d", id)));
         questionPertainToUserValidator.accept(user, question);
         question.setTitle(questionRequest.getTitle());
         question.setText(questionRequest.getText());

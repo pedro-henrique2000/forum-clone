@@ -1,6 +1,7 @@
 package com.project.forumapi.model;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
@@ -8,6 +9,7 @@ import javax.persistence.*;
 
 @Entity
 @Data
+@EqualsAndHashCode()
 public class Vote {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

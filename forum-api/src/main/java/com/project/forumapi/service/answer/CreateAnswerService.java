@@ -34,7 +34,9 @@ public class CreateAnswerService {
 
     public AnswerResponse create(Long id, AnswerRequest request) {
         User loggedUser = loggedUserService.getLoggedUser();
-        Question question = questionRepository.findById(id).orElseThrow(NotFoundException::new);
+        Question question = questionRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException(String.format("Not found question with id %d", id)));
+
         Answer mappedAnswer = answerMapper.convert(request);
         mappedAnswer.setQuestion(question);
         mappedAnswer.setUser(loggedUser);

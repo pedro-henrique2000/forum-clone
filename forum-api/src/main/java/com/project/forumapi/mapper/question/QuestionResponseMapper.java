@@ -23,7 +23,7 @@ public class QuestionResponseMapper {
         questionResponse.setUserId(question.getUser().getId());
         questionResponse.setUsername(question.getUser().getUsername());
         questionResponse.setName(question.getUser().getName());
-        questionResponse.setNumberOfAwnswers(findAnswerByQuestionService.find(question).size());
+        questionResponse.setNumberOfAwnswers(findAnswerByQuestionService.find(question.getId()).size());
 
         return questionResponse;
     }

@@ -26,7 +26,7 @@ public class FindQuestionByUserService {
     QuestionResponseMapper questionResponseMapper;
 
     public List<QuestionResponse> findByUser(Long id) {
-        User user = userRepository.findById(id).orElseThrow(NotFoundException::new);
+        User user = userRepository.findById(id).orElseThrow(() -> new NotFoundException(String.format("Not found a user with id %d", id)));
         List<Question> questionList = questionRepository.findByUser(user);
 
         return questionList.stream()
