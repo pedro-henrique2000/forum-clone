@@ -41,6 +41,5 @@ public class CreateAnswerService {
         mappedAnswer.setQuestion(question);
         mappedAnswer.setUser(loggedUser);
         return answerResponseMapper.convert(answerRepository.save(mappedAnswer));
-
     }
 }
